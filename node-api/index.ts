@@ -13,7 +13,7 @@ import ENV from './enviroments/env.production'
 import AuthToken from './middlewares/token.middleware'
 const token = AuthToken(ENV)
 //MongoDBHelper Import
-import MongoDBCliente from 'mongodb'
+import MongoDBCliente, { Code } from 'mongodb'
 import MongoDBHelper from './helpers/mongodb.helper'
 
 // Variables Declaration
@@ -103,13 +103,7 @@ app.post('/login', (req: Request, res: Response) => {
 //todos
 app.get('/products', async (req: Request, res: Response) => {
 
-    //res.header("Access-Control-Allow-Origin", "*");//Indicar el dominio a accesar
-    //res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
     const productos = await mongodb.db.collection('cars').find({}).toArray();
-
-    //console.log('API-Productos: ', productos);
-
     res.status(200).json(
         apiUtils.BodyResponse(
             APIStatusEnum.Success, 'OK', 'La solicitud ha tenido éxito',
@@ -119,43 +113,45 @@ app.get('/products', async (req: Request, res: Response) => {
             }
         )
     );
-
 });
 
 //por id
-app.get('/product/:id', async (req: Request, res: Response) => {
-
-    const { id } = req.params;
-    const _id = new MongoDBCliente.ObjectID(id);
-
-    const productos = await mongodb.db.collection('cars').find({ _id }).toArray();
+app.get('/product/:code', async (req: Request, res: Response) => {
+    const { code } = req.params;
+    //const _id = new MongoDBCliente.ObjectID(id);
+    const productos = await mongodb.db.collection('cars').findOne({ 'codigo': code });
     //console.log('API-Productos: ', productos);
     res.status(200).json(
-        apiUtils.BodyResponse(
-            APIStatusEnum.Success, 'OK', 'La solicitud ha tenido éxito',
-            {
-                productos,
-                authUser: req.body.authUser
-            }
-        )
+        productos
+        // apiUtils.BodyResponse(
+        //     APIStatusEnum.Success, 'OK', 'La solicitud ha tenido éxito',
+        //     {
+        //         productos,
+        //         authUser: req.body.authUser
+        //     }
+        // )
     );
 });
 
+//const productos = await mongodb.db.collection('cars').find({ 'categoria': { '$regex': categoria, '$options': 'i' } }).toArray();
+
 //por categoría
 app.get('/products/category/:categoria', async (req: Request, res: Response) => {
-
+    // const { categoria } = req.params;
+    // const productos = await mongodb.db.collection('cars').find({ 'categoria': categoria }).toArray();
     const { categoria } = req.params;
-
-    const productos = await mongodb.db.collection('cars').find({ 'categoria': categoria }).toArray();
+    const productos = await mongodb.db.collection('cars').find({ 'categoria': { '$regex': categoria, '$options': 'i' } }).toArray();
+    //const filter = productos.filter((item: any) => item.categoria == category || item.categoria.indexOf(category) >= 0);
     //console.log('API-Productos: ', productos);
     res.status(200).json(
-        apiUtils.BodyResponse(
-            APIStatusEnum.Success, 'OK', 'La solicitud ha tenido éxito',
-            {
-                productos,
-                authUser: req.body.authUser
-            }
-        )
+        productos
+        // apiUtils.BodyResponse(
+        //     APIStatusEnum.Success, 'OK', 'La solicitud ha tenido éxito',
+        //     {
+        //         productos
+        //         //authUser: req.body.authUser
+        //     }
+        // )
     );
 });
 
@@ -167,13 +163,14 @@ app.get('/products/descripcion/:criterio', async (req: Request, res: Response) =
     const productos = await mongodb.db.collection('cars').find({ "descripcion": { $regex: criterio, $options: 'i' } }).toArray();
     //console.log('API-Productos: ', productos);
     res.status(200).json(
-        apiUtils.BodyResponse(
-            APIStatusEnum.Success, 'OK', 'La solicitud ha tenido éxito',
-            {
-                productos,
-                authUser: req.body.authUser
-            }
-        )
+        productos
+        // apiUtils.BodyResponse(
+        //     APIStatusEnum.Success, 'OK', 'La solicitud ha tenido éxito',
+        //     {
+        //         productos,
+        //         //authUser: req.body.authUser
+        //     }
+        // )
     );
 });
 

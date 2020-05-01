@@ -19,9 +19,9 @@ export class ProductsService {
     return this.http.get(URL_Paises);
   }
 
-  getAll() {
-    return this.http.get(URL_PRODUCTS + "/products");
-  }
+  // getAll() {
+  //   return this.http.get(URL_PRODUCTS + "/products");
+  // }
   // getCategory(category: string) {
   //   return new Observable(observer => {
   //     this.http.get(URL_PRODUCTS + '/products/category/').subscribe((data: ProductoModelos[]) => {
@@ -31,30 +31,30 @@ export class ProductsService {
   //   });
   // }
 
-  getCategory(category: string) {
+  getCategory(categoria: string) {
     return new Observable(observer => {
-      this.http.get(URL_PRODUCTS + "/products/category/" + category).subscribe((data: ProductoModelos[]) => {
-        const filter = data['result']['products'];
-        observer.next(filter);
-        console.log(URL_PRODUCTS + "/products/category/" + category)
+      this.http.get(URL_PRODUCTS + "/products/category/" + categoria).subscribe((data: ProductoModelos[]) => {
+        observer.next(data);
+        console.log(data);
       });
     });
   }
 
   getByCode(code: string) {
     return new Observable(observer => {
-      this.http.get(URL_PRODUCTS + "/product/").subscribe((data: ProductoModelos[]) => {
-        const filter = data.filter(item => item.codigo == code);
-        observer.next(filter[0]);
+      this.http.get(URL_PRODUCTS + "/product/" + code).subscribe((data: ProductoModelos[]) => {
+        //const filter = data.filter(item => item.codigo == code);
+        observer.next(data);
+        //observer.next(data);
       });
     });
   }
-  getSearch(description: string) {
+  getSearch(descripcion: string) {
     return new Observable(observer => {
-      this.http.get(URL_PRODUCTS + "/products/descripcion/").subscribe((data: ProductoModelos[]) => {
-        const filter = data.filter(item =>
-          item.descripcion.toLowerCase() == description.toLowerCase() || item.descripcion.toLowerCase().indexOf(description.toLowerCase()) >= 0);
-        observer.next(filter);
+      this.http.get(URL_PRODUCTS + "/products/descripcion/" + descripcion).subscribe((data: ProductoModelos[]) => {
+        // const filter = data.filter(item =>
+        //   item.descripcion.toLowerCase() == descripcion.toLowerCase() || item.descripcion.toLowerCase().indexOf(descripcion.toLowerCase()) >= 0);
+        observer.next(data);
       });
     });
   }

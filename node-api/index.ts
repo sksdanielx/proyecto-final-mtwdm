@@ -27,8 +27,12 @@ app.use(Express.urlencoded({ extended: true }));
 app.use(Express.json());
 
 //cors
-
-
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    next();
+});
 // Routes
 app.post('/login', (req: Request, res: Response) => {
 
@@ -97,10 +101,10 @@ app.post('/login', (req: Request, res: Response) => {
 });
 
 //todos
-app.get('/products', token.verify, async (req: Request, res: Response) => {
+app.get('/products', async (req: Request, res: Response) => {
 
-    res.header("Access-Control-Allow-Origin", "*");//Indicar el dominio a accesar
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    //res.header("Access-Control-Allow-Origin", "*");//Indicar el dominio a accesar
+    //res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
     const productos = await mongodb.db.collection('cars').find({}).toArray();
 
@@ -119,7 +123,7 @@ app.get('/products', token.verify, async (req: Request, res: Response) => {
 });
 
 //por id
-app.get('/product/:id', token.verify, async (req: Request, res: Response) => {
+app.get('/product/:id', async (req: Request, res: Response) => {
 
     const { id } = req.params;
     const _id = new MongoDBCliente.ObjectID(id);
@@ -138,7 +142,7 @@ app.get('/product/:id', token.verify, async (req: Request, res: Response) => {
 });
 
 //por categoría
-app.get('/products/category/:categoria', token.verify, async (req: Request, res: Response) => {
+app.get('/products/category/:categoria', async (req: Request, res: Response) => {
 
     const { categoria } = req.params;
 
@@ -156,7 +160,7 @@ app.get('/products/category/:categoria', token.verify, async (req: Request, res:
 });
 
 //por criterio
-app.get('/products/descripcion/:criterio', token.verify, async (req: Request, res: Response) => {
+app.get('/products/descripcion/:criterio', async (req: Request, res: Response) => {
 
     const { criterio } = req.params;
 

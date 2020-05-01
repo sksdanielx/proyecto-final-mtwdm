@@ -25,7 +25,9 @@ const mongodb = MongoDBHelper.getInstance(ENV);
 
 app.use(Express.urlencoded({ extended: true }));
 app.use(Express.json());
+
 //cors
+
 
 // Routes
 app.post('/login', (req: Request, res: Response) => {
@@ -94,7 +96,11 @@ app.post('/login', (req: Request, res: Response) => {
     }
 });
 
+//todos
 app.get('/products', token.verify, async (req: Request, res: Response) => {
+
+    res.header("Access-Control-Allow-Origin", "*");//Indicar el dominio a accesar
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
     const productos = await mongodb.db.collection('cars').find({}).toArray();
 
@@ -112,7 +118,8 @@ app.get('/products', token.verify, async (req: Request, res: Response) => {
 
 });
 
-app.get('/products/:id', token.verify, async (req: Request, res: Response) => {
+//por id
+app.get('/product/:id', token.verify, async (req: Request, res: Response) => {
 
     const { id } = req.params;
     const _id = new MongoDBCliente.ObjectID(id);
@@ -131,10 +138,40 @@ app.get('/products/:id', token.verify, async (req: Request, res: Response) => {
 });
 
 //por categoría
+app.get('/products/category/:categoria', token.verify, async (req: Request, res: Response) => {
 
+    const { categoria } = req.params;
 
-//por palabra
+    const productos = await mongodb.db.collection('cars').find({ 'categoria': categoria }).toArray();
+    //console.log('API-Productos: ', productos);
+    res.status(200).json(
+        apiUtils.BodyResponse(
+            APIStatusEnum.Success, 'OK', 'La solicitud ha tenido éxito',
+            {
+                productos,
+                authUser: req.body.authUser
+            }
+        )
+    );
+});
 
+//por criterio
+app.get('/products/descripcion/:criterio', token.verify, async (req: Request, res: Response) => {
+
+    const { criterio } = req.params;
+
+    const productos = await mongodb.db.collection('cars').find({ "descripcion": { $regex: criterio, $options: 'i' } }).toArray();
+    //console.log('API-Productos: ', productos);
+    res.status(200).json(
+        apiUtils.BodyResponse(
+            APIStatusEnum.Success, 'OK', 'La solicitud ha tenido éxito',
+            {
+                productos,
+                authUser: req.body.authUser
+            }
+        )
+    );
+});
 
 
 // Start Express Server

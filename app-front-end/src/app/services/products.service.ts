@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 //siempre buscar un solo punto de control
 //const URL_PRODUCTS = 'https://angular-products-lopez.firebaseio.com/productos.json';
 //const URL_PRODUCTS = 'http://localhost:5000';
-const URL_PRODUCTS = 'http://api.midominio.com:5000';
+const URL_PRODUCTS = 'http://api.midominio.com';
 const URL_Paises = 'https://apipettde.azurewebsites.net/api/producto';
 
 @Injectable({
